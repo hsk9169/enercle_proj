@@ -1,0 +1,13 @@
+{
+    "custNo": "0422204117",
+    "custName": "코스모화학",
+    "contractpower": "600",
+    "CBLMethod": "CBL_ABD_ADJ_FH_MAX45_QTY",
+    "powerThreshold5": "777.0000000000",
+    "resourceCode": "20211000004483",
+    "mes_maxload_title": "(주)에너클 피크부하 알림",
+    "mes_maxload_body": "금일 사용량이 설정된 피크부하를 초과하였습니다.",
+    "mes_reduce_title": "(주)에너클 감축 발령 알림",
+    "mes_reduce_body": "금일 DR 감축 발령입니다.",
+    "usergubun": "TRUE"
+}

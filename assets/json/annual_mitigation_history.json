@@ -1,0 +1,46 @@
+[
+  {
+      "custNo": "0422204117",
+      "ReduceDay": "20220101",
+      "ReduceStartTime": "1600",
+      "ReduceEndTime": "1800",
+      "Gubun": "ENROLL_TEST",
+      "ThatCBL": "8606.95",
+      "ReducePwr": "1455.65",
+      "Pwr": "5000.43",
+      "ResultPercent": "87"
+  },
+  {
+    "custNo": "0422204117",
+    "ReduceDay": "20220321",
+    "ReduceStartTime": "0700",
+    "ReduceEndTime": "0800",
+    "Gubun": "MITIGATION_TEST",
+    "ThatCBL": "7606.95",
+    "ReducePwr": "2455.65",
+    "Pwr": "4000.43",
+    "ResultPercent": "91"
+  },
+  {
+    "custNo": "0422204117",
+    "ReduceDay": "20220430",
+    "ReduceStartTime": "1600",
+    "ReduceEndTime": "1800",
+    "Gubun": "OFFICIAL_ISSUE",
+    "ThatCBL": "6606.95",
+    "ReducePwr": "3455.65",
+    "Pwr": "3000.43",
+    "ResultPercent": "97"
+  },
+  {
+    "custNo": "0422204117",
+    "ReduceDay": "20220725",
+    "ReduceStartTime": "1600",
+    "ReduceEndTime": "1800",
+    "Gubun": "SELF_DR",
+    "ThatCBL": "5606.95",
+    "ReducePwr": "2455.65",
+    "Pwr": "4000.43",
+    "ResultPercent": "106"
+  }
+]
