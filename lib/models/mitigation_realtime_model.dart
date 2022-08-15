@@ -32,14 +32,14 @@ class MitigationRealtimeModel {
         startTime: json['ReduceStartTime'],
         endTime: json['ReduceEndTime'],
         type: json['Gubun'] == 'entertest'
-            ? '등록'
+            ? '등록시험'
             : json['Gubun'] == 'reducetest'
-                ? '감축'
+                ? '감축시험'
                 : json['Gubun'] == 'emergency'
-                    ? '발령'
+                    ? '감축발령'
                     : json['Gubun'] == 'voluntarily'
-                        ? '자발적'
-                        : '해당없음',
+                        ? '자발적DR'
+                        : '알 수 없음',
         cbl: json['ThatCBL'],
         mitigationTotal: json['ReducePwr'],
         mitigationExpect: json['PreReducePwr'],

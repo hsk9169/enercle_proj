@@ -62,55 +62,56 @@ class _RealtimeMonitoring5minView extends State<RealtimeMonitoring5minView>
     setState(() => _isLoading = true);
     final sessionProvider = Provider.of<Session>(context, listen: false);
     final platformProvider = Provider.of<Platform>(context, listen: false);
-    final dateString = NumberHandler().datetimeToString(DateTime.now());
-    dynamic powerRealtimeResponse = await _realApiService.getRealtimePower(
-        sessionProvider.customerInfo.customerNumber, dateString);
-    //dynamic powerRealtimeResponse = await _fakeApiService.getRealtimePower(
-    //    sessionProvider.customerInfo.customerNumber, dateString);
+    //final dateString = NumberHandler().datetimeToString(DateTime.now());
+    final String dateString = '20220810';
+    if (!platformProvider.isSignedOut) {
+      dynamic powerRealtimeResponse = await _realApiService.getRealtimePower(
+          sessionProvider.customerInfo.customerNumber, dateString);
 
-    // Unlock Screen Touch
-    platformProvider.isLoading = false;
+      // Unlock Screen Touch
+      platformProvider.isLoading = false;
 
-    if (powerRealtimeResponse == 'SOCKET_EXCEPTION') {
-      platformProvider.popupErrorMessage = '네트워크 오류 발생';
-      platformProvider.isErrorMessagePopup = true;
-      _resetData();
-    } else if (powerRealtimeResponse == 'SERVER_TIMEOUT') {
-      platformProvider.popupErrorMessage = '서버 요청시간 만료';
-      platformProvider.isErrorMessagePopup = true;
-      _resetData();
-    } else if (powerRealtimeResponse == 'UNKNOWN_ERROR') {
-      platformProvider.popupErrorMessage = '알 수 없는 에러 발생';
-      platformProvider.isErrorMessagePopup = true;
-      _resetData();
-    } else {
-      if (powerRealtimeResponse == 'BAD_REQUEST') {
-        platformProvider.popupErrorMessage = '앱 요청 오류 발생';
+      if (powerRealtimeResponse == 'SOCKET_EXCEPTION') {
+        platformProvider.popupErrorMessage = '네트워크 오류 발생';
         platformProvider.isErrorMessagePopup = true;
         _resetData();
-      } else if (powerRealtimeResponse == 'SERVER_ERROR') {
-        platformProvider.popupErrorMessage = '서버 오류 발생';
+      } else if (powerRealtimeResponse == 'SERVER_TIMEOUT') {
+        platformProvider.popupErrorMessage = '서버 요청시간 만료';
         platformProvider.isErrorMessagePopup = true;
         _resetData();
-      } else if (powerRealtimeResponse == 'NO_DATA') {
-        platformProvider.popupErrorMessage = '데이터 없음';
+      } else if (powerRealtimeResponse == 'UNKNOWN_ERROR') {
+        platformProvider.popupErrorMessage = '알 수 없는 에러 발생';
         platformProvider.isErrorMessagePopup = true;
         _resetData();
       } else {
-        setState(() {
-          _isLoading = false;
-          _realtimeLastPower = NumberHandler().makeDoubleFixedPoint(
-              double.parse(powerRealtimeResponse.powerLast5min), 2);
-          _realtimeYesterdayPower = NumberHandler().makeDoubleFixedPoint(
-              double.parse(powerRealtimeResponse.powerYesterday5min), 2);
-          _date = powerRealtimeResponse.date;
-          _time = powerRealtimeResponse.time;
-          _cumulatedCurPower = NumberHandler().makeDoubleFixedPoint(
-              double.parse(powerRealtimeResponse.powerLastSum), 2);
-          _cumulatedLastPower = NumberHandler().makeDoubleFixedPoint(
-              double.parse(powerRealtimeResponse.powerYesterdaySum), 2);
-          _dateTimeString = NumberHandler().makeCurTimeString(_date, _time);
-        });
+        if (powerRealtimeResponse == 'BAD_REQUEST') {
+          platformProvider.popupErrorMessage = '앱 요청 오류 발생';
+          platformProvider.isErrorMessagePopup = true;
+          _resetData();
+        } else if (powerRealtimeResponse == 'SERVER_ERROR') {
+          platformProvider.popupErrorMessage = '서버 오류 발생';
+          platformProvider.isErrorMessagePopup = true;
+          _resetData();
+        } else if (powerRealtimeResponse == 'NO_DATA') {
+          platformProvider.popupErrorMessage = '데이터 없음';
+          platformProvider.isErrorMessagePopup = true;
+          _resetData();
+        } else {
+          setState(() {
+            _isLoading = false;
+            _realtimeLastPower = NumberHandler().makeDoubleFixedPoint(
+                double.parse(powerRealtimeResponse.powerLast5min), 2);
+            _realtimeYesterdayPower = NumberHandler().makeDoubleFixedPoint(
+                double.parse(powerRealtimeResponse.powerYesterday5min), 2);
+            _date = powerRealtimeResponse.date;
+            _time = powerRealtimeResponse.time;
+            _cumulatedCurPower = NumberHandler().makeDoubleFixedPoint(
+                double.parse(powerRealtimeResponse.powerLastSum), 2);
+            _cumulatedLastPower = NumberHandler().makeDoubleFixedPoint(
+                double.parse(powerRealtimeResponse.powerYesterdaySum), 2);
+            _dateTimeString = NumberHandler().makeCurTimeString(_date, _time);
+          });
+        }
       }
     }
     return true;

@@ -1,10 +1,8 @@
 class Power1hourModel {
   final String date;
   final String time;
-  //final String power1hour;
-  //final String cbl;
-  final double power1hour;
-  final double cbl;
+  final String power1hour;
+  final String cbl;
 
   Power1hourModel(
       {required this.date,

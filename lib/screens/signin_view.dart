@@ -30,6 +30,8 @@ class _SignInView extends State<SignInView>
   final _fakeApiService = FakeApiService();
   final _realApiService = RealApiService();
 
+  bool _isSignedOut = false;
+
   String _id = '';
   String _pw = '';
   String _phoneNum = '';
@@ -84,6 +86,7 @@ class _SignInView extends State<SignInView>
           Provider.of<Platform>(context, listen: false).phoneNumSaved;
       _checkAutoSignin =
           Provider.of<Platform>(context, listen: false).autoSignin;
+      _isSignedOut = Provider.of<Platform>(context, listen: false).isSignedOut;
     });
   }
 
@@ -141,10 +144,13 @@ class _SignInView extends State<SignInView>
 
     if (signinReturn == 'SOCKET_EXCEPTION') {
       _showErrorDialog('네트워크 오류 발생');
+      return;
     } else if (signinReturn == 'TIMEOUT_EXCEPTION') {
       _showErrorDialog('서버 요청시간 만료');
+      return;
     } else if (signinReturn == 'UNKNOWN_ERROR') {
       _showErrorDialog('알 수 없는 에러 발생');
+      return;
     } else {
       if (signinReturn == 'BAD_REQUEST') {
         _showErrorDialog('로그인 정보 입력 오류');
@@ -177,7 +183,7 @@ class _SignInView extends State<SignInView>
 
         // Setting auto signin
         if (_checkAutoSignin) {
-          await _encryptedStorageService.saveData('autoSignin', 'YES');
+          await _encryptedStorageService.saveData('autoSignin', 'TRUE');
           await _encryptedStorageService.saveData('userId', _id);
           await _encryptedStorageService.saveData('userPw', _pw);
           await _encryptedStorageService.saveData('userPhoneNum', _phoneNum);
@@ -188,20 +194,23 @@ class _SignInView extends State<SignInView>
             await _encryptedStorageService.removeData('userPw');
           }
           if (_checkRememberId) {
-            await _encryptedStorageService.saveData('idSaved', 'YES');
+            await _encryptedStorageService.saveData('idSaved', 'TRUE');
             await _encryptedStorageService.saveData('userId', _id);
           } else if (platformProvider.idSaved) {
             await _encryptedStorageService.removeData('idSaved');
             await _encryptedStorageService.removeData('userId');
           }
           if (_checkRememberPhoneNum) {
-            await _encryptedStorageService.saveData('phoneNumSaved', 'YES');
+            await _encryptedStorageService.saveData('phoneNumSaved', 'TRUE');
             await _encryptedStorageService.saveData('userPhoneNum', _phoneNum);
           } else if (platformProvider.phoneNumSaved) {
             await _encryptedStorageService.removeData('phoneNumSaved');
             await _encryptedStorageService.removeData('userPhoneNum');
           }
         }
+
+        await _encryptedStorageService.removeData('isSignedOut');
+        platformProvider.isSignedOut = false;
 
         Navigator.pushNamedAndRemoveUntil(
             context, Routes.SERVICE, (Route<dynamic> route) => false,

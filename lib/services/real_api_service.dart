@@ -40,8 +40,6 @@ class RealApiService implements ApiService {
           res.statusCode == 401 ||
           res.statusCode == 402) {
         return 'BAD_REQUEST';
-      } else if (res.statusCode == 405) {
-        return 'ALREADY_SINGED_IN';
       } else {
         return 'SERVER_ERROR';
       }
@@ -233,7 +231,7 @@ class RealApiService implements ApiService {
           },
           body: jsonEncode(<String, String>{
             'UserID': customerNum,
-            'Pwd': password,
+            'pwd': password,
             'usergubun': isAdmin,
           }));
       if (res.statusCode == 201) {
@@ -271,6 +269,36 @@ class RealApiService implements ApiService {
             'UserID': customerNum,
             'powerThreshold5': peakPower.toString(),
             'usergubun': isAdmin,
+          }));
+      if (res.statusCode == 201) {
+        return '';
+      } else if (res.statusCode >= 400 && res.statusCode < 500) {
+        return 'BAD_REQUEST';
+      } else {
+        return 'SERVER_ERROR';
+      }
+    } catch (err) {
+      if (err is SocketException) {
+        return 'SOCKET_EXCEPTION';
+      } else if (err is TimeoutException) {
+        return 'SERVER_TIMEOUT';
+      } else {
+        return 'UNKNOWN_ERROR';
+      }
+    }
+  }
+
+  @override
+  Future<String> signOut(String userId, String phoneNum) async {
+    try {
+      final res = await http.post(
+          Uri(scheme: 'http', host: _hostAddress, port: 6161, path: '/logout'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+          body: jsonEncode(<String, String>{
+            'UserID': userId,
+            'UserPhone': phoneNum,
           }));
       if (res.statusCode == 201) {
         return '';

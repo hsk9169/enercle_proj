@@ -125,8 +125,6 @@ class _MitigationStatusView extends State<MitigationStatusView>
         platformProvider.isErrorMessagePopup = true;
         _resetData();
       } else if (mitigationResponse == 'NO_DATA') {
-        platformProvider.popupErrorMessage = '데이터 없음';
-        platformProvider.isErrorMessagePopup = true;
         _resetData();
       } else {
         setState(() {

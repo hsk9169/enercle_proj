@@ -18,8 +18,8 @@ class _MypageChangePasswordView extends State<MypageChangePasswordView> {
   late TextEditingController _textController;
   String _password = '';
 
-  final FakeApiService _apiService = FakeApiService();
-  //final RealApiService _apiService = RealApiService();
+  //final FakeApiService _apiService = FakeApiService();
+  final RealApiService _apiService = RealApiService();
   final _encryptedStorageService = EncryptedStorageService();
 
   @override
@@ -75,6 +75,7 @@ class _MypageChangePasswordView extends State<MypageChangePasswordView> {
         platformProvider.isErrorMessagePopup = true;
       } else {
         await _encryptedStorageService.saveData('userPw', _password);
+        platformProvider.userPw = _password;
         _renderDialog();
         Future.delayed(const Duration(seconds: 2), () async {
           Navigator.pop(context);

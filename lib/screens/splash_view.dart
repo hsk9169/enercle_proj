@@ -76,8 +76,10 @@ class _SplashView extends State<SplashView> {
         await _encryptedStorageService.readData('autoSignin') != ''
             ? true
             : false;
-    print(await _encryptedStorageService.readData('allowAlarm'));
-    print(platformProvider.allowAlarm);
+    platformProvider.isSignedOut =
+        await _encryptedStorageService.readData('isSignedOut') == 'TRUE'
+            ? true
+            : false;
   }
 
   Future<void> _autoSignin() async {
@@ -85,7 +87,7 @@ class _SplashView extends State<SplashView> {
     final platformProvider = Provider.of<Platform>(context, listen: false);
     String goto = 'signin';
 
-    if (platformProvider.autoSignin) {
+    if (platformProvider.autoSignin && !platformProvider.isSignedOut) {
       final String date = NumberHandler().datetimeToString(DateTime.now());
 
       dynamic signinReturn = await _realApiService.signIn(

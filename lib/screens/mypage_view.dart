@@ -10,6 +10,8 @@ import 'package:enercle_proj/utils/number_handler.dart';
 import 'package:enercle_proj/screens/mypage/change_password_view.dart';
 import 'package:enercle_proj/screens/mypage/change_threshold_view.dart';
 import 'package:enercle_proj/services/encrypted_storage_service.dart';
+import 'package:enercle_proj/routes.dart';
+import 'package:enercle_proj/services/real_api_service.dart';
 
 class MypageView extends StatefulWidget {
   @override
@@ -17,10 +19,11 @@ class MypageView extends StatefulWidget {
 }
 
 class _MypageView extends State<MypageView> {
-  // TODO
-  // Peak Power Setting - add parameter in SessionProvider
-  // Password Change - update parameter in SecureStorage if auto-login
   final _encryptedStorageService = EncryptedStorageService();
+
+  final RealApiService _apiService = RealApiService();
+
+  bool _isSignOutTapped = false;
 
   @override
   void initState() {
@@ -60,7 +63,40 @@ class _MypageView extends State<MypageView> {
         platformProvider.isErrorMessagePopup = true;
       }
     }
-    //await _encryptedStorageService.readAll();
+  }
+
+  void _onTapSignOut() async {
+    final platformProvider = Provider.of<Platform>(context, listen: false);
+    final sessionProvider = Provider.of<Session>(context, listen: false);
+    dynamic response = await _apiService.signOut(
+        sessionProvider.customerInfo.customerNumber, platformProvider.phoneNum);
+
+    if (response == 'SOCKET_EXCEPTION') {
+      platformProvider.popupErrorMessage = '네트워크 오류 발생';
+      platformProvider.isErrorMessagePopup = true;
+    } else if (response == 'TIMEOUT_EXCEPTION') {
+      platformProvider.popupErrorMessage = '서버 요청시간 만료';
+      platformProvider.isErrorMessagePopup = true;
+    } else if (response == 'UNKNOWN_ERROR') {
+      platformProvider.popupErrorMessage = '알 수 없는 에러 발생';
+      platformProvider.isErrorMessagePopup = true;
+    } else {
+      if (response == 'BAD_REQUEST') {
+        platformProvider.popupErrorMessage = '로그인 정보 입력 오류';
+        platformProvider.isErrorMessagePopup = true;
+        return;
+      } else if (response == 'SERVER_ERROR') {
+        platformProvider.popupErrorMessage = '서버 오류 발생';
+        platformProvider.isErrorMessagePopup = true;
+        return;
+      } else {
+        await _encryptedStorageService.saveData('isSignedOut', 'TRUE');
+        Navigator.pushNamedAndRemoveUntil(
+            context, Routes.SIGNIN, (Route<dynamic> route) => false);
+        platformProvider.flush();
+        sessionProvider.flush();
+      }
+    }
   }
 
   @override
@@ -209,7 +245,6 @@ class _MypageView extends State<MypageView> {
                 'TRUE'
             ? true
             : false;
-    Provider.of<Session>(context, listen: false).show();
     final platform = Provider.of<Platform>(context, listen: false);
     return Column(children: [
       isAdmin
@@ -259,6 +294,13 @@ class _MypageView extends State<MypageView> {
             Icon(Icons.arrow_forward_ios,
                 size: context.pWidth * 0.07, color: Colors.grey))
       ])),
+      SizedBox(
+          width: context.pWidth,
+          height: context.pHeight * 0.2,
+          child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+            _renderSignOut(),
+            _renderAppVersion(),
+          ]))
     ]);
   }
 
@@ -294,5 +336,45 @@ class _MypageView extends State<MypageView> {
           }
         },
         child: childWidget);
+  }
+
+  Widget _renderSignOut() {
+    return GestureDetector(
+        onTapDown: (details) {
+          setState(() {
+            _isSignOutTapped = true;
+          });
+        },
+        onTapUp: (details) {
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setState(() {
+              _isSignOutTapped = false;
+            });
+            _onTapSignOut();
+          });
+        },
+        onTapCancel: () {
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setState(() {
+              _isSignOutTapped = false;
+            });
+          });
+        },
+        child: Text('로그아웃',
+            style: TextStyle(
+              color: _isSignOutTapped ? Colors.black26 : Colors.black54,
+              fontSize: context.pWidth * 0.05,
+            )));
+  }
+
+  Widget _renderAppVersion() {
+    return Padding(
+        padding: EdgeInsets.only(
+            bottom: context.pHeight * 0.005, top: context.pHeight * 0.025),
+        child: Column(children: [
+          Text('${String.fromCharCode(0x00A9)} Copyright 2022 Enercle, Inc.',
+              style: TextStyle(color: Colors.grey)),
+          Text('All Rights Reserved', style: TextStyle(color: Colors.grey))
+        ]));
   }
 }

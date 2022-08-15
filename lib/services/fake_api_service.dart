@@ -96,4 +96,9 @@ class FakeApiService implements ApiService {
       String customerNum, String peakPower, String isAdmin) async {
     return '';
   }
+
+  @override
+  Future<String> signOut(String userId, String phoneNum) async {
+    return '';
+  }
 }

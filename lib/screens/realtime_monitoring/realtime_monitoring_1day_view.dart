@@ -97,13 +97,10 @@ class _RealtimeMonitoring1dayView extends State<RealtimeMonitoring1dayView> {
           _isLoading = false;
           powerCblResponse.asMap().forEach((index, element) {
             final hour = int.parse(element.time.substring(0, 2));
-            //_powerColumnData.add(RealtimeData(
-            //    hour: hour, power: double.parse(element.power1hour)));
-            //_cblLineData
-            //    .add(RealtimeData(hour: hour, power: double.parse(element.cbl)));
-            _powerColumnData
-                .add(RealtimeData(hour: hour, power: element.power1hour));
-            _cblLineData.add(RealtimeData(hour: hour, power: element.cbl));
+            _powerColumnData.add(RealtimeData(
+                hour: hour, power: double.parse(element.power1hour)));
+            _cblLineData.add(
+                RealtimeData(hour: hour, power: double.parse(element.cbl)));
           });
         });
       }

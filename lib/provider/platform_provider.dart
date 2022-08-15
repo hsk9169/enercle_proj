@@ -18,6 +18,7 @@ class Platform with ChangeNotifier {
   bool _allowAlarm = true;
   bool _isErrorMessagePopup = false;
   String _popupErrorMessage = '';
+  bool _isSignedOut = false;
 
   bool get isLoading => _isLoading;
   bool get isMitigating => _isMitigating;
@@ -36,6 +37,7 @@ class Platform with ChangeNotifier {
   bool get allowAlarm => _allowAlarm;
   bool get isErrorMessagePopup => _isErrorMessagePopup;
   String get popupErrorMessage => _popupErrorMessage;
+  bool get isSignedOut => _isSignedOut;
 
   set isLoading(bool value) {
     _isLoading = value;
@@ -129,6 +131,26 @@ class Platform with ChangeNotifier {
 
   set popupErrorMessage(String value) {
     _popupErrorMessage = value;
+    notifyListeners();
+  }
+
+  set isSignedOut(bool value) {
+    _isSignedOut = value;
+    notifyListeners();
+  }
+
+  void flush() {
+    _isLoading = false;
+    _isMitigating = false;
+    _mitigationTime = DateTime.now();
+    _mitigationType = '';
+    _mitigationBadgeCount = 0;
+    _peakBadgeCount = 0;
+    _totalBadgeCount = 0;
+    _servicePageNum = 0;
+    _isErrorMessagePopup = false;
+    _popupErrorMessage = '';
+    _isSignedOut = true;
     notifyListeners();
   }
 

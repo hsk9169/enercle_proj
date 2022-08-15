@@ -8,4 +8,5 @@ abstract class ApiService {
       String customerNum, String password, String isAdmin);
   Future<dynamic> changePeakPower(
       String customerNum, String peakPower, String isAdmin);
+  Future<dynamic> signOut(String userId, String phoneNum);
 }

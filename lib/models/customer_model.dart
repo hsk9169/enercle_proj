@@ -41,7 +41,7 @@ class CustomerModel {
     );
   }
 
-  factory CustomerModel.reset() {
+  factory CustomerModel.initialize() {
     return CustomerModel(
       customerNumber: '',
       customerName: '',

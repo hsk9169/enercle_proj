@@ -136,7 +136,7 @@ class MonitoringGauge extends StatelessWidget {
                     Text(
                         lastValue > 0
                             ? NumberHandler().addComma(lastValue.toString())
-                            : '데이터 없음',
+                            : '0',
                         style: TextStyle(
                             fontSize: context.pHeight * 0.023,
                             color: Colors.grey,
@@ -156,7 +156,7 @@ class MonitoringGauge extends StatelessWidget {
                           Text(
                               lastValue > 0
                                   ? '${NumberHandler().addComma(lastValue.toString())} kW'
-                                  : '데이터 없음',
+                                  : '0 kW',
                               style: TextStyle(
                                   fontSize: context.pHeight * 0.02,
                                   color: Colors.grey,
