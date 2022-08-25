@@ -28,6 +28,7 @@ class _RealtimeMonitoring1dayView extends State<RealtimeMonitoring1dayView> {
 
   bool _isDatePickerTapped = false;
   bool _isLoading = false;
+  String _lastTime = '0000';
 
   late Future<bool> _future;
 
@@ -96,6 +97,7 @@ class _RealtimeMonitoring1dayView extends State<RealtimeMonitoring1dayView> {
         setState(() {
           _isLoading = false;
           powerCblResponse.asMap().forEach((index, element) {
+            _lastTime = element.lastTime;
             final hour = int.parse(element.time.substring(0, 2));
             _powerColumnData.add(RealtimeData(
                 hour: hour, power: double.parse(element.power1hour)));
@@ -199,6 +201,7 @@ class _RealtimeMonitoring1dayView extends State<RealtimeMonitoring1dayView> {
                       color: Colors.white,
                       child: Column(children: [
                         _renderDatePicker(),
+                        _renderLastTime(),
                         _renderOneDayData()
                       ])),
                   _isLoading
@@ -217,7 +220,7 @@ class _RealtimeMonitoring1dayView extends State<RealtimeMonitoring1dayView> {
     return Container(
         padding: EdgeInsets.only(
             top: context.pHeight * 0.01,
-            bottom: context.pHeight * 0.05,
+            bottom: context.pHeight * 0.03,
             left: context.pWidth * 0.03,
             right: context.pWidth * 0.03),
         alignment: Alignment.center,
@@ -298,28 +301,39 @@ class _RealtimeMonitoring1dayView extends State<RealtimeMonitoring1dayView> {
         ));
   }
 
+  Widget _renderLastTime() {
+    return Container(
+        padding: EdgeInsets.only(
+            bottom: context.pHeight * 0.02,
+            left: context.pWidth * 0.03,
+            right: context.pWidth * 0.03),
+        alignment: Alignment.center,
+        child: Text('최근 데이터 : ${NumberHandler().hhmiToTime(_lastTime, 12)} 데이터',
+            style: TextStyle(
+                fontSize: context.pWidth * 0.05, fontWeight: FontWeight.bold)));
+  }
+
   Widget _renderOneDayData() {
     return Container(
         height: context.pHeight * 0.5,
         padding: EdgeInsets.only(),
         child: SfCartesianChart(
             primaryXAxis: CategoryAxis(),
-            primaryYAxis: NumericAxis(labelFormat: '{value}kW'),
+            primaryYAxis: NumericAxis(labelFormat: '{value}kWh'),
             legend: Legend(position: LegendPosition.bottom, isVisible: true),
             series: <ChartSeries<RealtimeData, String>>[
               ColumnSeries<RealtimeData, String>(
-                name: '사용량',
-                gradient: LinearGradient(
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                    colors: [
-                      Colors.blue.withOpacity(0.3),
-                      Colors.blue.withOpacity(0.7)
-                    ]),
-                dataSource: _powerColumnData,
-                xValueMapper: (RealtimeData rtData, _) => '${rtData.hour}시',
-                yValueMapper: (RealtimeData rtData, _) => rtData.power,
-              ),
+                  name: '사용량',
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        Colors.blue.withOpacity(0.3),
+                        Colors.blue.withOpacity(0.7)
+                      ]),
+                  dataSource: _powerColumnData,
+                  xValueMapper: (RealtimeData rtData, _) => '${rtData.hour}시',
+                  yValueMapper: (RealtimeData rtData, _) => rtData.power),
               LineSeries<RealtimeData, String>(
                 name: 'CBL',
                 color: Colors.deepOrange.withOpacity(0.7),

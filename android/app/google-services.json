@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:596493824931:android:8ddd391bd906fa53d1e016",
+        "mobilesdk_app_id": "1:596493824931:android:1809d0dcb4b15d6cd1e016",
         "android_client_info": {
-          "package_name": "com.example.enercle_proj"
+          "package_name": "com.enercle.enercle_proj"
         }
       },
       "oauth_client": [
@@ -30,6 +30,13 @@
             {
               "client_id": "596493824931-0sel4ir5hakfddv8ml3pm0h80gk7kf7a.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "596493824931-t3utkgpcdo7pc9o88f368jvjngvotp8u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.enercleProj"
+              }
             }
           ]
         }

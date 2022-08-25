@@ -149,14 +149,9 @@ class RealApiService implements ApiService {
             'Content-Type': 'application/json; charset=utf-8',
           });
       if (res.statusCode == 201 || res.statusCode == 203) {
-        final list = jsonDecode(res.body);
-        final int length = list.length;
-        List<MitigationRealtimeModel> reversedList = [];
-        for (int i = 0; i < length; i++) {
-          reversedList
-              .add(MitigationRealtimeModel.fromJson(list[length - i - 1]));
-        }
-        return reversedList;
+        return jsonDecode(res.body)
+            .map((element) => MitigationRealtimeModel.fromJson(element))
+            .toList();
       } else if (res.statusCode == 202) {
         return 'NO_DATA';
       } else if (res.statusCode == 400 || res.statusCode == 401) {

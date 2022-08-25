@@ -356,7 +356,7 @@ class _MitigationFootprintView extends State<MitigationFootprintView> {
         child: Column(children: [
           AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              height: status ? context.pHeight * 0.45 : context.pHeight * 0.14,
+              height: status ? context.pHeight * 0.45 : context.pHeight * 0.16,
               padding: EdgeInsets.only(
                 top: context.pHeight * 0.01,
                 bottom: context.pHeight * 0.01,
@@ -383,7 +383,7 @@ class _MitigationFootprintView extends State<MitigationFootprintView> {
                                           const Duration(milliseconds: 200),
                                       child: Icon(
                                         Icons.keyboard_arrow_down,
-                                        size: context.pHeight * 0.03,
+                                        size: context.pHeight * 0.045,
                                       )))
                             ]),
                         Padding(
@@ -419,32 +419,30 @@ class _MitigationFootprintView extends State<MitigationFootprintView> {
     return SizedBox(
         height: context.pHeight * 0.28,
         child: SfCartesianChart(
-            primaryXAxis: CategoryAxis(),
-            primaryYAxis: NumericAxis(labelFormat: '{value}kW'),
-            series: <CartesianSeries>[
-              ColumnSeries<FulfillmentData, String>(
-                  name: '이행률',
-                  pointColorMapper: (FulfillmentData data, index) => index == 0
-                      ? Colors.blue.withOpacity(0.7)
-                      : index == 1
-                          ? Colors.red.withOpacity(0.7)
-                          : index == 2
-                              ? Colors.green.withOpacity(0.7)
-                              : Colors.grey.withOpacity(0.7),
-                  dataSource: _chartData[index],
-                  xValueMapper: (FulfillmentData data, _) => data.cat,
-                  yValueMapper: (FulfillmentData data, _) => data.fulfillment,
-                  dataLabelMapper: (FulfillmentData data, _) => data
-                              .fulfillment >
-                          0
-                      ? '${NumberHandler().addComma(data.fulfillment.toString())}kW'
-                      : '0kW',
-                  dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      textStyle: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold))),
-            ],
-            tooltipBehavior:
-                TooltipBehavior(enable: true, shared: true, opacity: 0.6)));
+          primaryXAxis: CategoryAxis(),
+          primaryYAxis: NumericAxis(labelFormat: '{value}kWh'),
+          series: <CartesianSeries>[
+            ColumnSeries<FulfillmentData, String>(
+                name: '이행률',
+                pointColorMapper: (FulfillmentData data, index) => index == 0
+                    ? Colors.blue.withOpacity(0.7)
+                    : index == 1
+                        ? Colors.red.withOpacity(0.7)
+                        : index == 2
+                            ? Colors.green.withOpacity(0.7)
+                            : Colors.grey.withOpacity(0.7),
+                dataSource: _chartData[index],
+                xValueMapper: (FulfillmentData data, _) => data.cat,
+                yValueMapper: (FulfillmentData data, _) => data.fulfillment,
+                dataLabelMapper: (FulfillmentData data, _) => data.fulfillment >
+                        0
+                    ? '${NumberHandler().addComma(data.fulfillment.toString())}kWh'
+                    : '0kWh',
+                dataLabelSettings: DataLabelSettings(
+                    isVisible: true,
+                    textStyle: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold))),
+          ],
+        ));
   }
 }

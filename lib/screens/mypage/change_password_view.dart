@@ -49,7 +49,8 @@ class _MypageChangePasswordView extends State<MypageChangePasswordView> {
     setState(() => _password = _textController.text);
   }
 
-  void _onPressedSubmit() async {
+  Future<void> _onPressedSubmit(
+      BuildContext context, VoidCallback onSuccess) async {
     final sessionProvider = Provider.of<Session>(context, listen: false);
     final platformProvider = Provider.of<Platform>(context, listen: false);
     final response = await _apiService.changePassword(
@@ -77,10 +78,6 @@ class _MypageChangePasswordView extends State<MypageChangePasswordView> {
         await _encryptedStorageService.saveData('userPw', _password);
         platformProvider.userPw = _password;
         _renderDialog();
-        Future.delayed(const Duration(seconds: 2), () async {
-          Navigator.pop(context);
-          Navigator.pop(context);
-        });
       }
     }
   }
@@ -228,6 +225,13 @@ class _MypageChangePasswordView extends State<MypageChangePasswordView> {
             child: Text('비밀번호 변경',
                 style: TextStyle(
                     color: Colors.white, fontSize: context.pWidth * 0.06)),
-            onPressed: () => _password == '' ? null : _onPressedSubmit()));
+            onPressed: () => _password == ''
+                ? null
+                : _onPressedSubmit(context, () {
+                    if (!mounted) return;
+                    Future.delayed(const Duration(seconds: 2), () async {
+                      Navigator.pop(context);
+                    });
+                  })));
   }
 }

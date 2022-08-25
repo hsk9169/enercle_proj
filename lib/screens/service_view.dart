@@ -102,24 +102,16 @@ class _ServiceView extends State<ServiceView> {
                           top: 0.0,
                           right: 0.0,
                           child: Icon(Icons.brightness_1,
-                              size: context.pHeight * 0.012,
-                              color: Colors.redAccent))
+                              size: context.pHeight * 0.012, color: Colors.red))
                       : SizedBox()
                 ]),
                 label: '사용량 모니터링',
               ),
               BottomNavigationBarItem(
-                icon: Stack(children: [
-                  Icon(Icons.energy_savings_leaf),
-                  isMitigating
-                      ? Positioned(
-                          top: 0.0,
-                          right: 0.0,
-                          child: Icon(Icons.brightness_1,
-                              size: context.pHeight * 0.012,
-                              color: Colors.redAccent))
-                      : SizedBox()
-                ]),
+                icon: Icon(Icons.energy_savings_leaf,
+                    color: isMitigating ? Colors.red : Colors.grey),
+                activeIcon: Icon(Icons.energy_savings_leaf,
+                    color: isMitigating ? Colors.red : MyColors.mainColor),
                 label: '감축량 모니터링',
               ),
               BottomNavigationBarItem(
@@ -346,8 +338,7 @@ class _ServiceView extends State<ServiceView> {
             2,
             mitigationTitle,
             '${mitigationBody.substring(0, 2)} $startTime - $endTime시 ${mitigationBody.substring(3)}, 해제까지 30분 남음',
-            //tz.TZDateTime.now(tz.local).add(const Duration(minutes: 30)),
-            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+            tz.TZDateTime.now(tz.local).add(const Duration(minutes: 30)),
             notificationDetails,
             payload: 'reduce',
             uiLocalNotificationDateInterpretation:
@@ -357,8 +348,7 @@ class _ServiceView extends State<ServiceView> {
             3,
             mitigationTitle,
             '${mitigationBody.substring(0, 2)} $startTime - $endTime시 ${mitigationBody.substring(3)}, 해제까지 10분 남음',
-            //tz.TZDateTime.now(tz.local).add(const Duration(minutes: 50)),
-            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
+            tz.TZDateTime.now(tz.local).add(const Duration(minutes: 50)),
             notificationDetails,
             payload: 'reduce',
             uiLocalNotificationDateInterpretation:

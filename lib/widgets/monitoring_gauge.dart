@@ -118,7 +118,7 @@ class MonitoringGauge extends StatelessWidget {
                               color: MyColors.mainColor,
                               fontSize: context.pWidth * 0.068,
                               fontWeight: FontWeight.bold)),
-                      Text(' kW',
+                      Text(' kWh',
                           style: TextStyle(
                               color: MyColors.mainColor,
                               fontSize: context.pWidth * 0.04,
@@ -155,8 +155,8 @@ class MonitoringGauge extends StatelessWidget {
                                   color: Colors.grey)),
                           Text(
                               lastValue > 0
-                                  ? '${NumberHandler().addComma(lastValue.toString())} kW'
-                                  : '0 kW',
+                                  ? '${NumberHandler().addComma(lastValue.toString())} kWh'
+                                  : '0 kWh',
                               style: TextStyle(
                                   fontSize: context.pHeight * 0.02,
                                   color: Colors.grey,

@@ -62,8 +62,8 @@ class _RealtimeMonitoring5minView extends State<RealtimeMonitoring5minView>
     setState(() => _isLoading = true);
     final sessionProvider = Provider.of<Session>(context, listen: false);
     final platformProvider = Provider.of<Platform>(context, listen: false);
-    //final dateString = NumberHandler().datetimeToString(DateTime.now());
-    final String dateString = '20220810';
+    final dateString = NumberHandler().datetimeToString(DateTime.now());
+
     if (!platformProvider.isSignedOut) {
       dynamic powerRealtimeResponse = await _realApiService.getRealtimePower(
           sessionProvider.customerInfo.customerNumber, dateString);

@@ -1,4 +1,4 @@
-package com.example.enercle_proj
+package com.enercle.enercle_proj
 
 import io.flutter.embedding.android.FlutterActivity
 

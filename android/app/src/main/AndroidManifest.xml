@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <!-- Added 'showWhenLocked' and 'turnScreenOn' for local notification -->
    <application
-        android:label="enercle_proj"
+        android:label="EnerDR"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

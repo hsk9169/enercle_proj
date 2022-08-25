@@ -25,6 +25,9 @@ class NumberHandler {
       floatStr = '.' + splitStr[1];
     }
     final count = intStr.length ~/ 3;
+    if (count == 0) {
+      ret = intStr;
+    }
     final remainder = intStr.length % 3;
     for (int i = 0; i < count; i++) {
       temp.add(
@@ -56,10 +59,13 @@ class NumberHandler {
     if (radix == 12) {
       int intHour = int.parse(hour);
       String day = '';
-      if (intHour > 12) {
+      if (intHour > 11 && intHour < 24) {
         day = '오후';
         intHour = intHour - 12;
       } else {
+        if (intHour == 24) {
+          intHour = 0;
+        }
         day = '오전';
       }
       ret = '$day $intHour시 $min분';

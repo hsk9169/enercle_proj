@@ -160,20 +160,24 @@ class _SignInView extends State<SignInView>
         return;
       } else {
         sessionProvider.setCustomerInfo = signinReturn;
-        dynamic mitigationReturn =
-            await _realApiService.getRealtimeMitigation(_id, date);
+        dynamic mitigationReturn = await _realApiService.getRealtimeMitigation(
+            sessionProvider.customerInfo.customerNumber, date);
         if (mitigationReturn != 'BAD_REQUEST' &&
             mitigationReturn != 'SERVER_ERROR' &&
             mitigationReturn != 'NO_DATA') {
-          if (mitigationReturn[0].state == 'doing') {
-            platformProvider.isMitigating = true;
-            platformProvider.mitigationTime = DateTime(
-                int.parse(mitigationReturn[0].date.substring(0, 4)),
-                int.parse(mitigationReturn[0].date.substring(4, 6)),
-                int.parse(mitigationReturn[0].date.substring(6, 8)),
-                int.parse(mitigationReturn[0].time.substring(0, 2)),
-                0);
-            platformProvider.mitigationType = mitigationReturn[0].type;
+          try {
+            if (mitigationReturn.last.state == 'doing') {
+              platformProvider.isMitigating = true;
+              platformProvider.mitigationTime = DateTime(
+                  int.parse(mitigationReturn.last.date.substring(0, 4)),
+                  int.parse(mitigationReturn.last.date.substring(4, 6)),
+                  int.parse(mitigationReturn.last.date.substring(6, 8)),
+                  int.parse(mitigationReturn.last.endTime.substring(0, 2)),
+                  0);
+              platformProvider.mitigationType = mitigationReturn.last.type;
+            }
+          } catch (err) {
+            _showErrorDialog('알 수 없는 에러 발생');
           }
         }
 

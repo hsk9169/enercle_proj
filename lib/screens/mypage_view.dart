@@ -228,7 +228,7 @@ class _MypageView extends State<MypageView> {
                                   fontWeight: FontWeight.bold)),
                           Padding(padding: EdgeInsets.all(lineSpacing)),
                           Text(
-                            '${thresholdStr}kW',
+                            '${thresholdStr}kWh',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: context.pHeight * 0.02,
@@ -247,53 +247,57 @@ class _MypageView extends State<MypageView> {
             : false;
     final platform = Provider.of<Platform>(context, listen: false);
     return Column(children: [
-      isAdmin
-          ? _menuItem(
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Row(children: [
-                Icon(Icons.notifications_active_outlined,
-                    size: context.pWidth * 0.07),
-                Padding(padding: EdgeInsets.all(context.pWidth * 0.02)),
-                Text('앱 푸시 알림 설정',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: context.pWidth * 0.055))
-              ]),
-              CupertinoSwitch(
-                value: platform.allowAlarm,
-                onChanged: (bool value) => _onAlarmChanged(value),
-              )
-            ]))
-          : SizedBox(),
-      isAdmin
-          ? _menuItem(
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Row(children: [
-                Icon(Icons.lock_outline, size: context.pWidth * 0.07),
-                Padding(padding: EdgeInsets.all(context.pWidth * 0.02)),
-                Text('비밀번호 변경',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: context.pWidth * 0.055))
-              ]),
-              _renderClickableArrow(
-                  'PASSWORD',
-                  Icon(Icons.arrow_forward_ios,
-                      size: context.pWidth * 0.07, color: Colors.grey))
-            ]))
-          : SizedBox(),
       _menuItem(
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Row(children: [
-          Icon(Icons.electric_bolt, size: context.pWidth * 0.07),
+          Icon(Icons.notifications_active_outlined,
+              size: context.pWidth * 0.07),
           Padding(padding: EdgeInsets.all(context.pWidth * 0.02)),
-          Text('최대 전력사용량 설정 변경',
+          Text('앱 푸시 알림 설정',
               style: TextStyle(
                   color: Colors.black, fontSize: context.pWidth * 0.055))
         ]),
-        _renderClickableArrow(
-            'THRESHOLD',
-            Icon(Icons.arrow_forward_ios,
-                size: context.pWidth * 0.07, color: Colors.grey))
+        CupertinoSwitch(
+          value: platform.allowAlarm,
+          onChanged: (bool value) => _onAlarmChanged(value),
+        )
       ])),
+      isAdmin
+          ? _renderClickableArrow(
+              'PASSWORD',
+              _menuItem(Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
+                      Icon(Icons.lock_outline, size: context.pWidth * 0.07),
+                      Padding(padding: EdgeInsets.all(context.pWidth * 0.02)),
+                      Text('비밀번호 변경',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: context.pWidth * 0.055))
+                    ]),
+                    Icon(Icons.arrow_forward_ios,
+                        size: context.pWidth * 0.07, color: Colors.grey)
+                  ])))
+          : SizedBox(),
+      isAdmin
+          ? _renderClickableArrow(
+              'THRESHOLD',
+              _menuItem(Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
+                      Icon(Icons.electric_bolt, size: context.pWidth * 0.07),
+                      Padding(padding: EdgeInsets.all(context.pWidth * 0.02)),
+                      Text('최대 전력사용량 설정 변경',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: context.pWidth * 0.055))
+                    ]),
+                    Icon(Icons.arrow_forward_ios,
+                        size: context.pWidth * 0.07, color: Colors.grey)
+                  ])))
+          : SizedBox(),
       SizedBox(
           width: context.pWidth,
           height: context.pHeight * 0.2,

@@ -41,7 +41,8 @@ class _MypageChangeThresholdView extends State<MypageChangeThresholdView> {
     setState(() => _threshold = _textController.text);
   }
 
-  void _onPressedSubmit() async {
+  Future<void> _onPressedSubmit(
+      BuildContext context, VoidCallback onSuccess) async {
     final sessionProvider = Provider.of<Session>(context, listen: false);
     final platformProvider = Provider.of<Platform>(context, listen: false);
     final response = await _apiService.changePeakPower(
@@ -70,12 +71,9 @@ class _MypageChangeThresholdView extends State<MypageChangeThresholdView> {
             .customerInfo
             .powerThreshold5 = _threshold;
         _renderDialog();
-        Future.delayed(const Duration(seconds: 2), () async {
-          Navigator.pop(context);
-          Navigator.pop(context);
-        });
       }
     }
+    onSuccess.call();
   }
 
   void _renderDialog() async {
@@ -184,7 +182,7 @@ class _MypageChangeThresholdView extends State<MypageChangeThresholdView> {
             autofocus: true,
             decoration: InputDecoration(
                 border: InputBorder.none,
-                suffixText: 'kW',
+                suffixText: 'kWh',
                 suffixStyle: TextStyle(fontWeight: FontWeight.bold),
                 suffixIcon: IconButton(
                     padding: EdgeInsets.zero,
@@ -223,6 +221,13 @@ class _MypageChangeThresholdView extends State<MypageChangeThresholdView> {
             child: Text('설정 변경',
                 style: TextStyle(
                     color: Colors.white, fontSize: context.pWidth * 0.06)),
-            onPressed: () => _threshold == '' ? null : _onPressedSubmit()));
+            onPressed: () => _threshold == ''
+                ? null
+                : _onPressedSubmit(context, () {
+                    if (!mounted) return;
+                    Future.delayed(const Duration(seconds: 2), () async {
+                      Navigator.pop(context);
+                    });
+                  })));
   }
 }

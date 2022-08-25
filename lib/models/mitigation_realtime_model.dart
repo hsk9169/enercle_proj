@@ -43,7 +43,7 @@ class MitigationRealtimeModel {
         cbl: json['ThatCBL'],
         mitigationTotal: json['ReducePwr'],
         mitigationExpect: json['PreReducePwr'],
-        fulfillmentExpect: json['ResultPercenet'] ?? '0',
+        fulfillmentExpect: json['PreReducePercent'] ?? '0',
         time: json['hhmi'],
         contractPower: json['ContractPower'] ?? '0');
   }

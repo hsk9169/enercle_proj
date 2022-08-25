@@ -46,7 +46,7 @@ class _MitigationStatusView extends State<MitigationStatusView>
 
   List<MitigationRealtimeModel> _mitigationList = [];
   MitigationRealtimeModel _curMitigation = MitigationRealtimeModel.reset();
-  List<FulfillRateData> _historyData = [];
+  List<FulfillmentData> _historyData = [];
 
   @override
   void initState() {
@@ -94,11 +94,10 @@ class _MitigationStatusView extends State<MitigationStatusView>
   }
 
   Future<bool> _fetchMitigationData() async {
-    setState(() => _isLoading = true);
     final dateString = NumberHandler().datetimeToString(DateTime.now());
     final sessionProvider = Provider.of<Session>(context, listen: false);
     final platformProvider = Provider.of<Platform>(context, listen: false);
-    final mitigationResponse = await _realApiService.getRealtimeMitigation(
+    dynamic mitigationResponse = await _realApiService.getRealtimeMitigation(
         sessionProvider.customerInfo.customerNumber, dateString);
 
     platformProvider.isLoading = false;
@@ -130,22 +129,38 @@ class _MitigationStatusView extends State<MitigationStatusView>
         setState(() {
           mitigationResponse.forEach((element) {
             _mitigationList.add(element);
-            _historyData.add(FulfillRateData(
+            _historyData.add(FulfillmentData(
                 cat:
                     '${element.startTime.substring(0, 2)}~${element.endTime.substring(0, 2)}시',
-                rate: int.parse(element.fulfillmentExpect)));
+                fulfillment: double.parse(element.fulfillmentExpect)));
           });
-          _fulfillment = [
-            FulfillmentData(
-                cat: '예상 이행량',
-                fulfillment: mitigationResponse[0].mitigationExpect),
-            FulfillmentData(
-                cat: '현재 이행량',
-                fulfillment: mitigationResponse[0].mitigationTotal),
-          ];
           _curMitigation = _mitigationList.last;
           _isLoading = false;
         });
+        if (_curMitigation.state == 'doing') {
+          setState(() {
+            _fulfillment = [
+              FulfillmentData(
+                  cat: '예상 이행량',
+                  fulfillment:
+                      double.parse(mitigationResponse[0].mitigationExpect)),
+              FulfillmentData(
+                  cat: '현재 이행량',
+                  fulfillment:
+                      double.parse(mitigationResponse[0].mitigationTotal)),
+            ];
+          });
+          platformProvider.isMitigating = true;
+          platformProvider.isMitigating = true;
+          platformProvider.mitigationTime = DateTime(
+              int.parse(_curMitigation.date.substring(0, 4)),
+              int.parse(_curMitigation.date.substring(4, 6)),
+              int.parse(_curMitigation.date.substring(6, 8)),
+              int.parse(_curMitigation.endTime.substring(0, 2)),
+              0);
+          platformProvider.mitigationType = _curMitigation.type;
+          _initRemainTime();
+        }
       }
     }
 
@@ -265,7 +280,7 @@ class _MitigationStatusView extends State<MitigationStatusView>
                     Icon(Icons.report,
                         color: _colorTween.value, size: context.pHeight * 0.05),
                     Padding(padding: EdgeInsets.all(context.pHeight * 0.005)),
-                    Text('감축경보 발령 중',
+                    Text('${_curMitigation.type} 발령 중',
                         style: TextStyle(
                             fontSize: context.pHeight * 0.04,
                             fontWeight: FontWeight.bold,
@@ -280,6 +295,13 @@ class _MitigationStatusView extends State<MitigationStatusView>
   Widget _renderCurrentFulfillment() {
     final session = Provider.of<Session>(context, listen: false);
     Color rateColor = Colors.black;
+    final contractPower =
+        NumberHandler().addComma(_curMitigation.contractPower);
+    final cbl = _curMitigation.cbl != ''
+        ? NumberHandler()
+            .makeDoubleFixedPoint(double.parse(_curMitigation.cbl), 2)
+        : '0';
+
     return FutureBuilder(
         future: _future,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -333,13 +355,12 @@ class _MitigationStatusView extends State<MitigationStatusView>
                                             style: TextStyle(
                                                 fontSize:
                                                     context.pHeight * 0.018)),
-                                        Text(
-                                            '계약용량: ${_curMitigation.contractPower}',
+                                        Text('계약용량: ${contractPower}kW',
                                             style: TextStyle(
                                                 fontSize:
                                                     context.pHeight * 0.018)),
                                         Text(
-                                            'CBL: ${_curMitigation.cbl.toString()}kWh',
+                                            'CBL: ${NumberHandler().addComma(cbl.toString())}kW',
                                             style: TextStyle(
                                                 fontSize:
                                                     context.pHeight * 0.018)),
@@ -365,21 +386,25 @@ class _MitigationStatusView extends State<MitigationStatusView>
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize:
-                                                        context.pHeight * 0.04,
+                                                        context.pWidth * 0.07,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             Text(
-                                                '${_curMitigation.fulfillmentExpect}%',
+                                                _curMitigation
+                                                            .fulfillmentExpect !=
+                                                        ""
+                                                    ? '${NumberHandler().addComma(NumberHandler().makeDoubleFixedPoint(double.parse(_curMitigation.fulfillmentExpect), 2).toString())}%'
+                                                    : '',
                                                 style: TextStyle(
                                                     color: rateColor,
                                                     fontSize:
-                                                        context.pHeight * 0.04,
+                                                        context.pWidth * 0.07,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ]),
                                       Container(
-                                          width: context.pHeight * 0.32,
-                                          height: context.pHeight * 0.045,
+                                          width: context.pWidth * 0.75,
+                                          height: context.pHeight * 0.035,
                                           decoration: BoxDecoration(
                                               border: Border(
                                                   bottom: BorderSide(
@@ -397,7 +422,7 @@ class _MitigationStatusView extends State<MitigationStatusView>
                             child: SfCartesianChart(
                                 primaryXAxis: CategoryAxis(),
                                 primaryYAxis: NumericAxis(
-                                    interval: 1000, labelFormat: '{value}kWh'),
+                                    interval: 1000, labelFormat: '{value}kW'),
                                 enableSideBySideSeriesPlacement: false,
                                 legend: Legend(
                                     position: LegendPosition.bottom,
@@ -428,6 +453,11 @@ class _MitigationStatusView extends State<MitigationStatusView>
                                           data.cat,
                                       yValueMapper: (FulfillmentData data, _) =>
                                           data.fulfillment,
+                                      dataLabelMapper: (FulfillmentData data,
+                                              _) =>
+                                          data.fulfillment > 0
+                                              ? '${NumberHandler().addComma(NumberHandler().makeDoubleFixedPoint(data.fulfillment, 2).toString())}kW'
+                                              : '0kW',
                                       dataLabelSettings: DataLabelSettings(
                                           isVisible: true,
                                           textStyle: TextStyle(
@@ -485,17 +515,21 @@ class _MitigationStatusView extends State<MitigationStatusView>
                             primaryXAxis: CategoryAxis(),
                             primaryYAxis: NumericAxis(labelFormat: '{value}%'),
                             series: <CartesianSeries>[
-                              ColumnSeries<FulfillRateData, String>(
+                              ColumnSeries<FulfillmentData, String>(
                                   name: '이행률',
-                                  pointColorMapper: (FulfillRateData data,
+                                  pointColorMapper: (FulfillmentData data,
                                           index) =>
                                       ColorHandler().determineFulfillmentRate(
-                                          data.rate.toString()),
+                                          data.fulfillment.toString()),
                                   dataSource: _historyData,
-                                  xValueMapper: (FulfillRateData data, _) =>
+                                  xValueMapper: (FulfillmentData data, _) =>
                                       data.cat,
-                                  yValueMapper: (FulfillRateData data, _) =>
-                                      data.rate,
+                                  yValueMapper: (FulfillmentData data, _) =>
+                                      data.fulfillment,
+                                  dataLabelMapper: (FulfillmentData data, _) =>
+                                      data.fulfillment > 0
+                                          ? '${NumberHandler().addComma(NumberHandler().makeDoubleFixedPoint(data.fulfillment, 2).toString())}%'
+                                          : '0%',
                                   dataLabelSettings: DataLabelSettings(
                                       isVisible: true,
                                       alignment: ChartAlignment.center,
